@@ -1,0 +1,735 @@
+{
+	"info": {
+		"_postman_id": "8b51fa12-32a2-4a16-bc0f-df048039c362",
+		"name": "Liberal Systems API",
+		"description": "Complete Postman collection for testing the Liberal Systems premium LED display backend API. Contains configurations, sample payloads, and script-based JWT extraction.",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Auth",
+			"item": [
+				{
+					"name": "Admin Sign Up",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var jsonData = pm.response.json();",
+									"if (jsonData.success && jsonData.token) {",
+									"    pm.collectionVariables.set(\"admin_token\", jsonData.token);",
+									"    console.log(\"Saved admin_token to collection variables!\");",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"username\": \"newadmin\",\n  \"password\": \"LiberalAdmin2026!\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/auth/signup",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"auth",
+								"signup"
+							]
+						},
+						"description": "Registers a new administrator user and automatically saves the returned JWT token to the `admin_token` collection variable."
+					},
+					"response": []
+				},
+				{
+					"name": "Admin Login",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var jsonData = pm.response.json();",
+									"if (jsonData.success && jsonData.token) {",
+									"    pm.collectionVariables.set(\"admin_token\", jsonData.token);",
+									"    console.log(\"Saved admin_token to collection variables!\");",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"username\": \"admin\",\n  \"password\": \"LiberalAdmin2026!\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/auth/login",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"auth",
+								"login"
+							]
+						},
+						"description": "Logs in the administrator and automatically saves the returned JWT token to the `admin_token` collection variable."
+					},
+					"response": []
+				},
+				{
+					"name": "Admin Logout",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/auth/logout",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"auth",
+								"logout"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Products",
+			"item": [
+				{
+					"name": "Get All Products",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/products?category=outdoor&minPrice=1000&maxPrice=600000",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"products"
+							],
+							"query": [
+								{
+									"key": "category",
+									"value": "outdoor",
+									"description": "Filter by 'indoor', 'outdoor', 'transparent', 'mobile-advertising'"
+								},
+								{
+									"key": "minPrice",
+									"value": "1000",
+									"description": "Minimum price filter"
+								},
+								{
+									"key": "maxPrice",
+									"value": "600000",
+									"description": "Maximum price filter"
+								},
+								{
+									"key": "search",
+									"value": "screen",
+									"description": "Search keyword for product name/type",
+									"disabled": true
+								}
+							]
+						},
+						"description": "Retrieve list of products with optional filters."
+					},
+					"response": []
+				},
+				{
+					"name": "Get Single Product",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/products/{{productId}}",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"products",
+								"{{productId}}"
+							]
+						},
+						"description": "Gets details of a single product. Set the `productId` variable first."
+					},
+					"response": []
+				},
+				{
+					"name": "Create Product (Admin)",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{admin_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"name\": \"Liberal Ultra-Slim P1.8 Indoor Screen\",\n  \"category\": \"indoor\",\n  \"type\": \"FINE PITCH SYSTEM\",\n  \"price\": 45000,\n  \"priceUnit\": \"piece\",\n  \"description\": \"Premium high-density indoor LED panel with 1.8mm pixel pitch for close-up viewing.\",\n  \"brightness\": \"1000 Nits\",\n  \"cabinetType\": \"Die-cast Aluminum\",\n  \"pixelPitchOptions\": [\"P1.5\", \"P1.8\"],\n  \"refreshRate\": \"3,840 Hz\",\n  \"cabinetDimensions\": \"600mm x 337.5mm\",\n  \"powerConsumption\": \"Avg 200W/sqm\",\n  \"inStock\": true\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/products",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"products"
+							]
+						},
+						"description": "Creates a new LED product. Requires JWT Token (admin_token)."
+					},
+					"response": []
+				},
+				{
+					"name": "Update Product (Admin)",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{admin_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"price\": 42500,\n  \"inStock\": false\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/products/{{productId}}",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"products",
+								"{{productId}}"
+							]
+						},
+						"description": "Updates fields of an existing product."
+					},
+					"response": []
+				},
+				{
+					"name": "Soft Delete Product (Admin)",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{admin_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/products/{{productId}}",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"products",
+								"{{productId}}"
+							]
+						},
+						"description": "Soft deletes a product by marking it `isDeleted: true`."
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Quote Requests (Leads)",
+			"item": [
+				{
+					"name": "Submit Quote (Public)",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"fullName\": \"Ashok Patel\",\n  \"companyName\": \"Vidarbha Retailers Ltd\",\n  \"projectType\": \"retail\",\n  \"screenAreaSqFt\": 120,\n  \"phoneNumber\": \"+919876543210\",\n  \"email\": \"sales@vidarbharetail.com\",\n  \"pixelPitchPreference\": \"P2.5\",\n  \"additionalNotes\": \"Interested in setting up a retail store screen in Nagpur mall.\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/quotes",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"quotes"
+							]
+						},
+						"description": "Public route to submit a B2B quote request. Rate-limited to max 10 requests per 15 mins."
+					},
+					"response": []
+				},
+				{
+					"name": "Get All Quotes (Admin)",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{admin_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/quotes?status=new&page=1&limit=10",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"quotes"
+							],
+							"query": [
+								{
+									"key": "status",
+									"value": "new",
+									"description": "Filter by 'new', 'contacted', 'quoted', 'closed-won', 'closed-lost'"
+								},
+								{
+									"key": "page",
+									"value": "1",
+									"description": "Page index"
+								},
+								{
+									"key": "limit",
+									"value": "10",
+									"description": "Page limit size"
+								}
+							]
+						},
+						"description": "Retrieves paginated quote list. Requires admin authorization."
+					},
+					"response": []
+				},
+				{
+					"name": "Get Single Quote Detail (Admin)",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{admin_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/quotes/{{quoteId}}",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"quotes",
+								"{{quoteId}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update Quote Lead Status (Admin)",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{admin_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PATCH",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"status\": \"contacted\",\n  \"assignedTo\": \"Nagpur Sales Office\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/quotes/{{quoteId}}/status",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"quotes",
+								"{{quoteId}}",
+								"status"
+							]
+						},
+						"description": "Allows updating the status and assigned agent of a B2B quote lead."
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Rentals",
+			"item": [
+				{
+					"name": "Submit Rental Inquiry (Public)",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"fullName\": \"Karan Johar\",\n  \"phone\": \"+917777777777\",\n  \"email\": \"karan@films.com\",\n  \"eventType\": \"Awards Ceremony\",\n  \"eventDate\": \"2026-11-20\",\n  \"venueName\": \"Nagpur Gymkhana\",\n  \"venueCity\": \"Nagpur\",\n  \"screenSizeRequired\": \"20ft x 10ft\",\n  \"durationDays\": 2,\n  \"message\": \"Need high-brightness stage display panels.\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/rentals",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"rentals"
+							]
+						},
+						"description": "Submit a rental screen inquiry form."
+					},
+					"response": []
+				},
+				{
+					"name": "Get All Rentals (Admin)",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{admin_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/rentals?status=new",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"rentals"
+							],
+							"query": [
+								{
+									"key": "status",
+									"value": "new",
+									"description": "Filter by 'new', 'contacted', 'confirmed', 'completed'"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update Rental Status (Admin)",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{admin_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PATCH",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"status\": \"confirmed\"\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/rentals/{{rentalId}}/status",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"rentals",
+								"{{rentalId}}",
+								"status"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Specs (Slider Builder)",
+			"item": [
+				{
+					"name": "Get All Specs",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/specs",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"specs"
+							]
+						},
+						"description": "Fetch all spec matrix values (P1.5 - P10.0) to feed the frontend interactive specs builder slider."
+					},
+					"response": []
+				},
+				{
+					"name": "Get Spec by Pitch Code",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/specs/P1.5",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"specs",
+								"P1.5"
+							]
+						},
+						"description": "Retrieve specs for a single pitch name directly."
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Case Studies",
+			"item": [
+				{
+					"name": "Get All Case Studies",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/case-studies",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"case-studies"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Case Study by ID",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/api/case-studies/{{caseStudyId}}",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"case-studies",
+								"{{caseStudyId}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create Case Study (Admin)",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{admin_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"title\": \"Vidarbha Mall Grand Atrium Installation\",\n  \"clientName\": \"Vidarbha Mall Developers\",\n  \"location\": \"Nagpur\",\n  \"category\": \"retail\",\n  \"screenArea\": \"450 sq ft\",\n  \"challenge\": \"Architectural structural constraints requiring curved, lightweight display backplane.\",\n  \"solution\": \"Deployed P3 ultra-slim fixed indoor screen tailored to curved support grid.\",\n  \"outcome\": \"Incredible footfall engagement, premium aesthetics, 100% customer retention increase.\",\n  \"images\": [\"https://images.unsplash.com/photo-1497366216548-37526070297c\"]\n}"
+						},
+						"url": {
+							"raw": "{{baseUrl}}/api/case-studies",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"api",
+								"case-studies"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "baseUrl",
+			"value": "http://localhost:5000",
+			"type": "string"
+		},
+		{
+			"key": "admin_token",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "productId",
+			"value": "insert-id-here",
+			"type": "string"
+		},
+		{
+			"key": "quoteId",
+			"value": "insert-id-here",
+			"type": "string"
+		},
+		{
+			"key": "rentalId",
+			"value": "insert-id-here",
+			"type": "string"
+		},
+		{
+			"key": "caseStudyId",
+			"value": "insert-id-here",
+			"type": "string"
+		}
+	]
+}
